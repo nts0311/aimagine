@@ -1,0 +1,70 @@
+[
+    {
+        "code": "3d-model",
+        "name": "3D Model"
+    },
+    {
+        "code": "analog-film",
+        "name": "Analog Film"
+    },
+    {
+        "code": "anime",
+        "name": "Anime"
+    },
+    {
+        "code": "cinematic",
+        "name": "Cinematic"
+    },
+    {
+        "code": "comic-book",
+        "name": "Comic"
+    },
+    {
+        "code": "digital-art",
+        "name": "Digital Art"
+    },
+    {
+        "code": "enhance",
+        "name": "Enhance"
+    },
+    {
+        "code": "fantasy-art",
+        "name": "Fantasy Art"
+    },
+    {
+        "code": "isometric",
+        "name": "Isometric"
+    },
+    {
+        "code": "line-art",
+        "name": "Line Art"
+    },
+    {
+        "code": "low-poly",
+        "name": "Low Poly"
+    },
+    {
+        "code": "modeling-compound",
+        "name": "Modeling Compound"
+    },
+    {
+        "code": "neon-punk",
+        "name": "Neon Punk"
+    },
+    {
+        "code": "origami",
+        "name": "Origami"
+    },
+    {
+        "code": "photographic",
+        "name": "Photographic"
+    },
+    {
+        "code": "pixel-art",
+        "name": "Pixel Art"
+    },
+    {
+        "code": "tile-texture",
+        "name": "Tile Texture"
+    }
+]
