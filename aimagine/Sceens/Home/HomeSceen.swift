@@ -158,7 +158,7 @@ struct HomeSceen: View {
         VStack {
             NavigationLink(destination: TextToImageResultScreen(), isActive: $isShowingResultScreen) { EmptyView() }
             
-            AppButton(title: "Generate") {
+            AppButton(title: "Generate image") {
                 beginGeneration()
             }
             .disabled(disableGenerator)
