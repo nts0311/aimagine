@@ -107,7 +107,7 @@ struct HomeSceen: View {
         }
         
         VStack(alignment: .leading) {
-            AppTitleText("Mode and Styles")
+            AppTitleText("Model and Styles")
                 .padding()
             
             HStack(spacing: 16) {
