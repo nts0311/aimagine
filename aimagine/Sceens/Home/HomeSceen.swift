@@ -116,7 +116,7 @@ struct HomeSceen: View {
                     (UIScreen.screenWidth - 48) / 2
                 }
                 
-                OptionButton(title: "Model", description: engineName, iconName: "ic_pen") {
+                OptionButton(title: "Models", description: engineName, iconName: "ic_pen") {
                     withAnimation(.spring(response: 0.3, dampingFraction: 1, blendDuration: 0)) {
                         showingEngineSheet.toggle()
                     }
