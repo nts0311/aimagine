@@ -123,7 +123,7 @@ struct HomeSceen: View {
                 }
                     .frame(width: buttonWidth)
                 
-                OptionButton(title: "Style", description: styleName, iconName: "ic_add_round_solid") {
+                OptionButton(title: "Styles", description: styleName, iconName: "ic_add_round_solid") {
                     withAnimation(.spring(response: 0.3, dampingFraction: 1, blendDuration: 0)) {
                         showingStyleSheet.toggle()
                     }
