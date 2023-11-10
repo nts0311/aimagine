@@ -1,3 +1,3 @@
 ci: buildIpa
 buildIpa:
-	@fastlane buildIpa
+	@fastlane buildIpaDev
