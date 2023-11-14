@@ -38,9 +38,18 @@
 		E74EAB402AC1F538000CEDEB /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74EAB3A2AC1F538000CEDEB /* Endpoint.swift */; };
 		E76072392ABDF31A00ACCE5E /* UIScreen+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76072382ABDF31A00ACCE5E /* UIScreen+.swift */; };
 		E760723C2ABDF7B400ACCE5E /* BottomSheet in Frameworks */ = {isa = PBXBuildFile; productRef = E760723B2ABDF7B400ACCE5E /* BottomSheet */; };
+		E7802C332AFFF85F00C784CD /* ResultScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7802C322AFFF85F00C784CD /* ResultScreenViewModel.swift */; };
 		E7BE05852ACD121A0012898A /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7BE05842ACD121A0012898A /* HomeViewModel.swift */; };
 		E7BE05872ACDBB460012898A /* TextToImageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7BE05862ACDBB460012898A /* TextToImageRequest.swift */; };
 		E7BE05892ACDD3880012898A /* TextToImageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7BE05882ACDD3880012898A /* TextToImageResponse.swift */; };
+		E7C43E602AFE7BEB004C07E2 /* ComponentScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C43E5F2AFE7BEB004C07E2 /* ComponentScope.swift */; };
+		E7C43E622AFE7C2D004C07E2 /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C43E612AFE7C2D004C07E2 /* DIContainer.swift */; };
+		E7C43E642AFE81AC004C07E2 /* InjectedPropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C43E632AFE81AC004C07E2 /* InjectedPropertyWrapper.swift */; };
+		E7C43E662AFE83E7004C07E2 /* DIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C43E652AFE83E7004C07E2 /* DIManager.swift */; };
+		E7C43E682AFE88B1004C07E2 /* ImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C43E672AFE88B1004C07E2 /* ImageRepository.swift */; };
+		E7C43E6A2AFEA250004C07E2 /* DITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C43E692AFEA250004C07E2 /* DITests.swift */; };
+		E7C43E6D2AFEAB25004C07E2 /* StabilityAIServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C43E6C2AFEAB25004C07E2 /* StabilityAIServiceMock.swift */; };
+		E7C43E6F2AFEAC09004C07E2 /* RepoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C43E6E2AFEAC09004C07E2 /* RepoTests.swift */; };
 		E7D43AD62ACEA35F00954DB6 /* TextToImageResultScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D43AD52ACEA35F00954DB6 /* TextToImageResultScreen.swift */; };
 		E7D43AD92ACEA71A00954DB6 /* AdvancedSettingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D43AD82ACEA71A00954DB6 /* AdvancedSettingScreen.swift */; };
 		E7E2320B2AE67A6D0010994A /* ChipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7E2320A2AE67A6D0010994A /* ChipView.swift */; };
@@ -98,9 +107,18 @@
 		E74EAB392AC1F538000CEDEB /* NetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRequest.swift; sourceTree = "<group>"; };
 		E74EAB3A2AC1F538000CEDEB /* Endpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		E76072382ABDF31A00ACCE5E /* UIScreen+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScreen+.swift"; sourceTree = "<group>"; };
+		E7802C322AFFF85F00C784CD /* ResultScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultScreenViewModel.swift; sourceTree = "<group>"; };
 		E7BE05842ACD121A0012898A /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		E7BE05862ACDBB460012898A /* TextToImageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToImageRequest.swift; sourceTree = "<group>"; };
 		E7BE05882ACDD3880012898A /* TextToImageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToImageResponse.swift; sourceTree = "<group>"; };
+		E7C43E5F2AFE7BEB004C07E2 /* ComponentScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentScope.swift; sourceTree = "<group>"; };
+		E7C43E612AFE7C2D004C07E2 /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
+		E7C43E632AFE81AC004C07E2 /* InjectedPropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectedPropertyWrapper.swift; sourceTree = "<group>"; };
+		E7C43E652AFE83E7004C07E2 /* DIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIManager.swift; sourceTree = "<group>"; };
+		E7C43E672AFE88B1004C07E2 /* ImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRepository.swift; sourceTree = "<group>"; };
+		E7C43E692AFEA250004C07E2 /* DITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DITests.swift; sourceTree = "<group>"; };
+		E7C43E6C2AFEAB25004C07E2 /* StabilityAIServiceMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StabilityAIServiceMock.swift; sourceTree = "<group>"; };
+		E7C43E6E2AFEAC09004C07E2 /* RepoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoTests.swift; sourceTree = "<group>"; };
 		E7D43AD52ACEA35F00954DB6 /* TextToImageResultScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextToImageResultScreen.swift; sourceTree = "<group>"; };
 		E7D43AD82ACEA71A00954DB6 /* AdvancedSettingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingScreen.swift; sourceTree = "<group>"; };
 		E7E2320A2AE67A6D0010994A /* ChipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChipView.swift; sourceTree = "<group>"; };
@@ -216,10 +234,30 @@
 			path = ImageSize;
 			sourceTree = "<group>";
 		};
+		E7C43E5E2AFE7B80004C07E2 /* DI */ = {
+			isa = PBXGroup;
+			children = (
+				E7C43E5F2AFE7BEB004C07E2 /* ComponentScope.swift */,
+				E7C43E612AFE7C2D004C07E2 /* DIContainer.swift */,
+				E7C43E632AFE81AC004C07E2 /* InjectedPropertyWrapper.swift */,
+				E7C43E652AFE83E7004C07E2 /* DIManager.swift */,
+			);
+			path = DI;
+			sourceTree = "<group>";
+		};
+		E7C43E6B2AFEAB07004C07E2 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				E7C43E6C2AFEAB25004C07E2 /* StabilityAIServiceMock.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		E7D43AD42ACE92DD00954DB6 /* GenerationResult */ = {
 			isa = PBXGroup;
 			children = (
 				E7D43AD52ACEA35F00954DB6 /* TextToImageResultScreen.swift */,
+				E7802C322AFFF85F00C784CD /* ResultScreenViewModel.swift */,
 			);
 			path = GenerationResult;
 			sourceTree = "<group>";
@@ -251,6 +289,7 @@
 				E7E785EA2AC464C600695F4E /* DTO */,
 				E7E785E82AC4622A00695F4E /* StabilityAIService.swift */,
 				E7062B5A2AD854720097AE16 /* ImageGenerationStore.swift */,
+				E7C43E672AFE88B1004C07E2 /* ImageRepository.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -286,6 +325,7 @@
 		E7F2A0202AA61910009523AA /* aimagine */ = {
 			isa = PBXGroup;
 			children = (
+				E7C43E5E2AFE7B80004C07E2 /* DI */,
 				E70D057A2ACC19D900D81BE2 /* Model */,
 				E7E785E72AC4620F00695F4E /* Data */,
 				E7E785E42AC461CF00695F4E /* Constant */,
@@ -352,7 +392,10 @@
 		E7F468032AFAA14800D48796 /* aimagineTests */ = {
 			isa = PBXGroup;
 			children = (
+				E7C43E6B2AFEAB07004C07E2 /* Mocks */,
 				E7F468042AFAA14800D48796 /* aimagineTests.swift */,
+				E7C43E692AFEA250004C07E2 /* DITests.swift */,
+				E7C43E6E2AFEAC09004C07E2 /* RepoTests.swift */,
 			);
 			path = aimagineTests;
 			sourceTree = "<group>";
@@ -469,6 +512,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7C43E662AFE83E7004C07E2 /* DIManager.swift in Sources */,
 				E7062B5D2AD919D10097AE16 /* AppButton.swift in Sources */,
 				E7062B5F2AD945620097AE16 /* AppTitleText.swift in Sources */,
 				E717DFB22ABA000A006B8C26 /* Color+.swift in Sources */,
@@ -481,6 +525,7 @@
 				E70D05802ACC89BF00D81BE2 /* Bundle+.swift in Sources */,
 				E7D43AD62ACEA35F00954DB6 /* TextToImageResultScreen.swift in Sources */,
 				E70259F52AE046BB0026C0EB /* AppSlider.swift in Sources */,
+				E7C43E622AFE7C2D004C07E2 /* DIContainer.swift in Sources */,
 				E70D057E2ACC897E00D81BE2 /* SearchBarHeader.swift in Sources */,
 				E7E785E62AC461E600695F4E /* K.swift in Sources */,
 				E7E2320D2AE67AB90010994A /* AdvancedSettingViewModel.swift in Sources */,
@@ -500,14 +545,18 @@
 				E74EAB332AC1DDE5000CEDEB /* BottomSheet.swift in Sources */,
 				E74EAB402AC1F538000CEDEB /* Endpoint.swift in Sources */,
 				E7E785EC2AC464D500695F4E /* GetEngineListResponse.swift in Sources */,
+				E7802C332AFFF85F00C784CD /* ResultScreenViewModel.swift in Sources */,
 				E7BE05892ACDD3880012898A /* TextToImageResponse.swift in Sources */,
 				E7E2320B2AE67A6D0010994A /* ChipView.swift in Sources */,
+				E7C43E682AFE88B1004C07E2 /* ImageRepository.swift in Sources */,
 				E74EAB3D2AC1F538000CEDEB /* ApiManager.swift in Sources */,
 				E74EAB3C2AC1F538000CEDEB /* NetworkReqeust+URLRequest.swift in Sources */,
+				E7C43E602AFE7BEB004C07E2 /* ComponentScope.swift in Sources */,
 				E7F2A0352AA6225F009523AA /* HomeSceen.swift in Sources */,
 				E7BE05852ACD121A0012898A /* HomeViewModel.swift in Sources */,
 				E7F2A0222AA61910009523AA /* aimagineApp.swift in Sources */,
 				E7F2A0312AA61D8A009523AA /* ExpandabeTextBox.swift in Sources */,
+				E7C43E642AFE81AC004C07E2 /* InjectedPropertyWrapper.swift in Sources */,
 				E7E785E92AC4622A00695F4E /* StabilityAIService.swift in Sources */,
 				E7BE05872ACDBB460012898A /* TextToImageRequest.swift in Sources */,
 				E7190C502AC56B4E009C701E /* SqureItemGrid.swift in Sources */,
@@ -518,7 +567,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7C43E6A2AFEA250004C07E2 /* DITests.swift in Sources */,
+				E7C43E6D2AFEAB25004C07E2 /* StabilityAIServiceMock.swift in Sources */,
 				E7F468052AFAA14800D48796 /* aimagineTests.swift in Sources */,
+				E7C43E6F2AFEAC09004C07E2 /* RepoTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

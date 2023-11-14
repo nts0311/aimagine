@@ -21,7 +21,7 @@ struct ImageResultDTO: Decodable {
     let id: UUID = UUID()
 }
 
-extension ImageResultDTO: Identifiable { }
+extension ImageResultDTO: Identifiable, Equatable, Hashable { }
 
 extension ImageResultDTO: UIImageConvertible {
     var uiImage: UIImage {

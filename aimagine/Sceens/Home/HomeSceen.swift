@@ -10,20 +10,12 @@ import BottomSheet
 import SwiftUIIntrospect
 
 struct HomeSceen: View {
-    @EnvironmentObject private var imageGeneratorStore: ImageGenerationStore
-    
     @State private var showingStyleSheet = false
     @State private var showingEngineSheet = false
     @State private var isShowingResultScreen = false
     @State private var isShowingAdvancedSettingScreen = false
     
-    @State private var isLoading = false
-    @State private var data = ImageGenerationData()
-    @State private var errorMessage: String? = nil
-    
-    private var disableGenerator: Bool {
-        data.prompt.isEmpty
-    }
+    @StateObject private var viewModel = HomeViewModel()
     
     var body: some View {
         NavigationView {
@@ -33,7 +25,7 @@ struct HomeSceen: View {
                 
                AppGradientBackground()
                 
-                if isLoading {
+                if viewModel.isLoading {
                     LoadingView()
                 } else {
                     VStack {
@@ -50,19 +42,19 @@ struct HomeSceen: View {
                 
                 
                 BottomSheet(isPresented: $showingStyleSheet, height: .fullScreen) {action in
-                    StyleSelectionView(bottomSheetAction: action, selectedStyle: $data.style)
+                    StyleSelectionView(bottomSheetAction: action, selectedStyle: $viewModel.data.style)
                 }
             }
             .task {
-                await initData()
+                await viewModel.loadEngineAsync()
             }
             .preferredColorScheme(.dark)
             .navigationTitle("AI Image")
             .navigationBarHidden(showingStyleSheet)
             .confirmationDialog("Select Engine", isPresented: $showingEngineSheet, titleVisibility: .visible) {
-                ForEach(imageGeneratorStore.engines) {engine in
+                ForEach(viewModel.engines) {engine in
                     Button(engine.name ?? "") {
-                        data.selectedEngine = engine
+                        viewModel.data.selectedEngine = engine
                     }
                 }
             }
@@ -89,7 +81,7 @@ struct HomeSceen: View {
         VStack(alignment: .leading) {
             AppTitleText("Enter prompt")
                 .padding(.vertical, 8.0)
-            ExpandabeTextBox(text: $data.prompt)
+            ExpandabeTextBox(text: $viewModel.data.prompt)
         }
         .padding(.horizontal)
         .padding(.top)
@@ -99,11 +91,11 @@ struct HomeSceen: View {
     @ViewBuilder
     func OptionView() -> some View {
         var engineName: String {
-            data.selectedEngine?.shortName ?? "Add model"
+            viewModel.data.selectedEngine?.shortName ?? "Add model"
         }
         
         var styleName: String {
-            data.style?.name ?? "Add style"
+            viewModel.data.style?.name ?? "Add style"
         }
         
         VStack(alignment: .leading) {
@@ -143,7 +135,7 @@ struct HomeSceen: View {
             
             NavigationLink(isActive: $isShowingAdvancedSettingScreen,
             destination: {
-                AdvancedSettingScreen(data: $data)
+                AdvancedSettingScreen(data: $viewModel.data)
             }, label: {
                 EmptyView()
             })
@@ -156,49 +148,15 @@ struct HomeSceen: View {
         
         
         VStack {
-            NavigationLink(destination: TextToImageResultScreen(), isActive: $isShowingResultScreen) { EmptyView() }
+            NavigationLink(destination: TextToImageResultScreen(), isActive: $viewModel.isShowingResultScreen) { EmptyView() }
             
             AppButton(title: "Generate!") {
-                beginGeneration()
+                viewModel.beginGeneration()
             }
-            .disabled(disableGenerator)
-            .padding(.top)
+            .disabled(viewModel.disableGenerator)
+            .padding(.vertical)
         }
     }
-}
-
-extension HomeSceen {
-    
-    func initData() async {
-        guard imageGeneratorStore.engines.isEmpty else {
-            return
-        }
-        
-        isLoading = true
-        do {
-            try await imageGeneratorStore.loadEngine()
-            data.selectedEngine = imageGeneratorStore.defaultEngine
-        } catch {
-            errorMessage = "Cannot load engine!"
-        }
-        
-        isLoading = false
-    }
-    
-    func beginGeneration() {
-        Task {
-            do {
-                isLoading = true
-                try await imageGeneratorStore.generateImages(from: data)
-                isLoading = false
-                data = ImageGenerationData()
-                isShowingResultScreen = true
-            } catch {
-                errorMessage = "An error occured. Please try again later."
-            }
-        }
-    }
-    
 }
 
 //struct HomeSceen_Previews: PreviewProvider {

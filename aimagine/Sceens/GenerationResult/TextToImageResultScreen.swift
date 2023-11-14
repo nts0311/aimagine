@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ACarousel
+import SwiftUIIntrospect
 
 protocol ResultScreenData {
     var request: TextToImageRequest { get }
@@ -15,51 +16,127 @@ protocol ResultScreenData {
 
 struct TextToImageResultScreen: View {
     
-    @EnvironmentObject var imageGenerationStore: ImageGenerationStore
-    
-    var items: [ImageResultDTO] {
-        imageGenerationStore.latestResult?.images ?? []
-    }
+    @StateObject private var viewModel = ResultScreenViewModel()
+    @FocusState private var focusPrompt: Bool
     
     var body: some View {
-        
-        var itemWidth: CGFloat {
-            UIScreen.screenWidth * 0.86
-        }
-        
         ZStack(alignment: .top) {
             Color(red: 0.07, green: 0.06, blue: 0.11)
                 .ignoresSafeArea()
             
            AppGradientBackground()
             
-            VStack {
-                
-                Rectangle()
-                    .frame(height: 2)
-                    .foregroundColor(Color(hex: "#8F8F8F").opacity(0.2))
-                
-                
-                ACarousel(items, spacing: 16,
-                          sidesScaling: 0.8) {item in
-                    Image(uiImage: item.uiImage)
-                        .resizable()
-                        .frame(width: itemWidth, height: itemWidth)
-                        .cornerRadius(16)
+            if viewModel.isLoading {
+                LoadingView()
+            } else {
+                ScrollView {
+                    LineDivider()
+                    ImageCarousel()
+                    HistoryView()
+                    ButtonGenerate()
+                    PromptView()
                 }
-                .frame(height: itemWidth)
-                
-                AppButton(title: "Generate more")
-                
-                Spacer()
-                    .frame(maxHeight: .infinity)
+                .padding(.bottom)
             }
-            
         }
         .preferredColorScheme(.dark)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: BackButton(title: "Result"))
+    }
+    
+    @ViewBuilder
+    func LineDivider() -> some View {
+        Rectangle()
+            .frame(height: 2)
+            .foregroundColor(Color(hex: "#8F8F8F").opacity(0.2))
+    }
+    
+    @ViewBuilder
+    func ImageCarousel() -> some View {
+        var itemWidth: CGFloat {
+            UIScreen.screenWidth * 0.86
+        }
+        
+        ACarousel(
+            viewModel.currentItems,
+            index: $viewModel.currentImageIndex,
+            spacing: 16,
+            sidesScaling: 0.8
+        ) { item in
+            RoundImage(item.uiImage)
+                .frame(width: itemWidth, height: itemWidth)
+        }
+        .frame(height: itemWidth)
+    }
+    
+    @ViewBuilder
+    func HistoryView() -> some View {
+        
+        var gridRows: [GridItem] {
+            [GridItem(.flexible(), spacing: 0)]
+        }
+        
+        VStack(alignment: .leading) {
+            AppTitleText("History")
+
+            
+            ScrollView(.horizontal) {
+                LazyHGrid(rows: gridRows, spacing: 16) {
+                    
+                    ForEach(Array(viewModel.historyImages.enumerated()), id: \.element) { index, item in
+                        RoundImage(item.uiImage)
+                            .frame(width: 64, height: 64)
+                            .onTapGesture {
+                                viewModel.setCurrentResultItem(index)
+                            }
+                    }
+                    
+                }
+            }
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding()
+        
+    }
+    
+    @ViewBuilder
+    func ButtonGenerate() -> some View {
+        AppButton(title: "Generate more") {
+            viewModel.generateMore()
+        }
+        .padding(.bottom)
+    }
+    
+    @ViewBuilder
+    func PromptView() -> some View {
+        AppTitleText("Edit Input")
+            .padding(.vertical, 8)
+        
+        TextEditor(text: $viewModel.currentPrompt)
+            .submitLabel(.done)
+            .focused($focusPrompt)
+            .onChange(of: viewModel.currentPrompt) { _ in
+                if viewModel.currentPrompt.last?.isNewline == .some(true) {
+                    viewModel.currentPrompt.removeLast()
+                    focusPrompt = false
+                }
+            }
+            .foregroundColor(.white)
+            .frame(idealHeight: 80)
+            .introspect(.textEditor, on: .iOS(.v14, .v15, .v16, .v17)) { textView in
+                textView.backgroundColor = .clear
+            }
+            .addCommonBorder()
+            .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    func RoundImage(_ uiImage: UIImage) -> some View {
+        Image(uiImage: uiImage)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .cornerRadius(16)
     }
 }
 
@@ -82,11 +159,25 @@ struct BackButton: View {
     }
 }
 
-struct TextToImageResultScreen_Previews: PreviewProvider {
-    static var previews: some View {
+//struct TextToImageResultScreen_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TextToImageResultScreen()
+//    }
+//}
+
+class ResultDTOProvider {
+    static func getResult() -> [ImageResultDTO] {
+        let image = "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAANHUlEQVR4nOzXf9cQdH3GcW65jzTd0VJzKhkzKUvT/IWI7nTwWNNESNRj4gpJ5rmHR6UcmW7NLJPjOXn8Ua2TNnOxjKnZUVBQYHSgViMnSQyRbLgGEgoeGkwm3MPtUVzndM71ej2A63vO95/3+Qxe8+jaEUmnv7Uyuj925Ozo/n2P/DS6P7x7QXT/Fx89MLr/3m9Ni+5f8v0rovvHP3J9dH/y9bdE9+ef+avo/pnfmB7d3/2TC6L77zt+OLv/RwPR/RlnfCq6v190HYDfWwIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoNTggSMWRR947OB3RvfHX391dH/Wz++N7o+YcVp0ftL+B0T3D526Mro/ftzq6P4H37Yjuj/hrNej+0OfXxLdn/fWD6L7E04cFd1/ZuTY6P6oe98R3f/Ulcui+y4AgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKDUwHcOe0f0gXPXXhjd//W9x0f3r3v8oOj+Sfvvie6PfXhidH/EuBOi8yNPfH90f849fxXdf+rw30X3H/jCzuj+0zsGovuLF9wc3V8weW10/9Y/3x3dHze0N7rvAgAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASg3MHz0y+sDibXdE94f+/sPR/c33rIru//eUTdH9FWO+Ft3f9/KXo/uXjzwnur/5peHo/r2vPB/df+D2P4nuX/PijdH9z56xNbr/6L++Ht3/582nRvfP+69TovsuAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACg1MCW5X8cfeC+l/8muv/a+euj+4fM/W50f/7U7dH9hx85JLr/wg1LovtTz5wa3X9i59nR/YPXzIvun7H5vuj+z568KLq/YdnS6P5dpzwf3b/6pK9H9y/Y8JPovgsAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACg18AejN0YfWHn02uz+shei+6OO/afo/sqFB0T3f7v02ej+8/vNje6/538nR/fXjf1WdP+AG/8yuv/M3kOi+wvWnxXdv+wT10X3v7n99Oj+znVvi+5POGtOdN8FAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUGnjgjF9HH9j16ozo/sRXsw078tiLovvPvOuW6P7aj3wlun/5tK3R/Qf3rozuz//h7uj+n606P7o/MG99dP/Kk86J7i967PLo/qmzb4ru37Xpjuj+R17I/r8LAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoNXj8Jy+MPvDGty+J7t/20FB0f9bg96L7Nx34u+j+jltmR/cfmb41uv/uc98Z3f/Equz/r3riiej+c4PnR/fXHbEsuv/ucddE92cdc1d0f+KFe6P7/7F6THTfBQBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBqYN3xE9IGjRm2O7t9/96To/v6f/mp0/825l0b3Rw1/Jbq/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"
         
-        let data = GeneratedImageResult(request: TextToImageRequest(data: ImageGenerationData()), images: [])
+        let image1 = "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAANIUlEQVR4nOzXjdfXdX3HcS+90OVNaKPpNAq5dCwVTSvz5jTXSmNHmQmkO7Bcc0pQzSSdzrJTKeK1POE0lh5sN8qJSiLUWlecGDcOrfQwIoykQoUOzOWJgDGYSnN/xeucnfN6PP6A1+ec3/l9z/O8B488+FsHJX33rp9E90986C3R/bGPvza6v3L3IdH9qVsfiO6f9M/PRfff/6WHo/sbn78xun/D0DnR/R37ro7uLzz1pej+jx6cHt3/4H3XRfeHRpZF98874+no/sHRdQD+3xIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUG57z16ugDYyZOju6ffvHD0f1Tbr8rur9izoXR/aHbhqP79511TnT/tHOHovvDA9uj+3teGInur//YEdH9d153f3T/yjfMiu5feti10f2pJy6P7u8+fXd03wUAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQanD/0VPSBtU9vje6fM7Qkur/35+dF96ddsyW6/9UbT4nuPzec3X9l0UnR/c2LV0b35521LLr/85deie7f9OMnovuXP/3T6P6mm7dH98++5yfR/VEn3BnddwEAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUGrrnxF9EH/ufKv4/uX3vUJdH9Ca85Ibp/yPa50f0p/31udP/Q4dnR/bVnnxzd/8wn5kf3v3z4n0T37962Jrr/vQWnR/cnzYzOH/Snn85+v6f97pHR/bP/aWd03wUAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQavHbF7dEHnnzHSHT/I+//XHR/1b3nRPe/t/Xb0f2HdqyO7t+wbUJ0f97gu6L79589Prr//VNuie5P2PU30f2Fu5ZG919ZdHd0/40Ljozu/2zym6P7h122MLrvAgAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASg1eu2F+9IELd4+N7v/n2EnR/Uf2vCa6f+amn0X393/p0ej+tg8uj+6f9kefie5fv/UX0f2xs0+O7k8+dWJ0/xt7Xhfdv/DIkej+8EXfie7f9ekHo/sb946P7rsAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSA5s/Oiv6wKZN50f3L/rl+Oj+h1/cEt2/+Kp/j+6/+tM/ju5ftXx0dP/oZ8+K7h/3qcOj+yeNmhTdf3L8W6L7V176bHT//Muzv/87x42J7u9fc1x0/94vHBbddwEAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUGl73wcPSBaR+fF91/45tviu7/5vtzo/sLFw9F9285/qXo/u9sXR/dHzf83uj+s1/ZGN1/bN346P763/52dH/zuEXR/dVTJkT3n7nj8Oj+pkcXRPf/YO6M6L4LAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoNbDvXd+MPnDzvqei+5e+uC66v3Hne6P7W963Ibq/feK86P7ouydG94+dMTW6v+3Wq6P7vxw7K7o/ZuSJ6P7uRVdG9x9afUt0/wNzb4vuz33f16P7x674QXTfBQBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBqYtXhm9IEvTpgR3T94eEV0/4oJq6P7q/YfE92fsOvL0f0Zfzguuj/5nunR/c9vfEN0f84d10X33/TDy6P7N1z/VHR//4eviu4vOXRfdH/c5APR/fXnPRrddwEAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUGVi9dE33g5aPuiO4/sGRhdP/A7a9G96df8Lno/qkjX4vuzx773ej+5A8cEd0f/usx0f3v3LQ8uv/8lIHo/uhV66L79y95d3T/Y2suie7POXokuv8fX9gR3XcBAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBnbdvCz6wK2vPSa6/6kpW6L7n33bndH99Vdtj+5ff/GM6P4XP3FudP+giy+Jzu/434Ho/vKVo6L7Uz+0Nro/cOBfo/t/u3NldP9rq6LzBy2e8ePo/n8dPSu67wIAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoN/uUx26MP/Nuxm6P7Lz95WXT/Iys+Gd3/1bSXo/vrdv5ddH/9hknR/Zm/d010f9uKx6L7M996T3R/yyl/Fd2/ee8T0f1pb3s8uj918Zui+3MWjYru/2jrzOi+CwCglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKDV47pbrog88ctl90f0bfrA3uv+VY8+I7p8xelp0/9BFj0T3v/rMD6P785cfFd3/6ODro/sz71oa3d/wm+XR/cEpJ0T3x+96d3R/z0X/EN2/Yvz50f2PX3BIdN8FAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUGjj58duiD9z6/D3R/aUn/nl0/9C3vxjdX/vgg9H9P/v8O6L7b19wU3T/mmmfje7P/4tnovu/3vPN6P6o6S9E90c2Phbd//33ZP8/Y95zZ3R/zgMPRPe/MTQ9uu8CACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKDR5xYGL0gb2rj4nuj74g27CR8xdH92//+q+i+2cOHRfd3/ovh0X3581eE93f++vR0f3jP/mh6P6kK14f3b/3t74V3T/r1XnR/Un/+Lro/m0Ljo/uP3fm7Oi+CwCglAAAlBIAgFICAFBKAABKCQBAKQEAKCUAAKUEAKCUAACUEgCAUgIAUEoAAEoJAEApAQAoJQAApQQAoJQAAJQSAIBSAgBQSgAASgkAQCkBACglAAClBACglAAAlBIAgFICAFBKAABKCQBAKQEAKPV/AQAA///fLX97s68bFgAAAABJRU5ErkJggg=="
         
-        TextToImageResultScreen()
+        let image2 = "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"
+        
+        return [
+            ImageResultDTO(base64: image, finishReason: nil),
+            ImageResultDTO(base64: image1, finishReason: nil),
+            ImageResultDTO(base64: image2, finishReason: nil),
+            ImageResultDTO(base64: image, finishReason: nil)
+        ]
     }
 }

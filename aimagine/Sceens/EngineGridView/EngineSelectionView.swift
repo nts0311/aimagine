@@ -51,7 +51,7 @@ struct EngineSelectionView: View {
         
         .task {
             do {
-                self.engines = try await StabilityAIService.getListEngines()
+                //self.engines = try await StabilityAIService.getListEngines()
             } catch {
                 print(error)
             }

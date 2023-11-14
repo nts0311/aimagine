@@ -9,11 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @StateObject var imageGenerationStore = ImageGenerationStore()
-    
     var body: some View {
        HomeSceen()
-            .environmentObject(imageGenerationStore)
     }
 }
 

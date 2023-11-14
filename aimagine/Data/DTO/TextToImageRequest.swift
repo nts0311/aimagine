@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TextToImageRequest: Encodable {
+struct TextToImageRequest: Encodable, Equatable {
     var height: Double? = 512
     var width: Double? = 512
     var textPrompts: [TextPrompt]
@@ -49,10 +49,19 @@ struct TextToImageRequest: Encodable {
         stylePreset = data.style?.code
     }
     
+    mutating func replaceMainPrompt(_ prompt: String) {
+        textPrompts = textPrompts.filter { !$0.isMainPrompt }
+        textPrompts.append(TextPrompt(text: prompt, weight: 1))
+    }
+    
 }
 
 
-struct TextPrompt: Encodable {
+struct TextPrompt: Encodable, Equatable {
     let text: String
     let weight: Double
+    
+    var isMainPrompt: Bool {
+        weight == 1.0
+    }
 }
